@@ -1,3 +1,19 @@
 /
 /dashboard
 /day/12
+
+GitHub
+  ↓
+Vercel
+  ↓
+Dockerfile.vercel
+  ↓
+Maven builds Spring Boot
+  ↓
+Java 17 runs application
+  ↓
+Spring Boot listens on $PORT
+  ↓
+@GetMapping("/")
+  ↓
+landing.html
