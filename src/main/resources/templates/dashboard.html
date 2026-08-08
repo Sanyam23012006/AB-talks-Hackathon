@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - ABTalks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-black text-slate-100 font-sans">
+
+<div class="max-w-[390px] mx-auto min-h-screen bg-[#0B0F19] text-slate-100 font-sans border-x border-slate-800 shadow-2xl relative pb-24 flex flex-col">
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="flex-1 px-4 py-6 flex flex-col gap-6">
+        
+        <!-- Welcome / Greeting -->
+        <div class="flex items-center gap-3">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" alt="Avatar" class="w-12 h-12 rounded-full border-2 border-emerald-500 object-cover">
+            <div>
+                <h2 class="font-bold text-lg leading-tight" th:text="${dashboard.isFirstDay ? 'Welcome, ' + dashboard.studentName + '!' : 'Welcome back, ' + dashboard.studentName + '!'}">Welcome, Aarav!</h2>
+                <p class="text-xs text-slate-400">ABESEC Ghaziabad</p>
+            </div>
+        </div>
+
+        <!-- Edge Case: First Day Onboarding -->
+        <div th:if="${dashboard.isFirstDay}" class="bg-gradient-to-r from-emerald-500/20 to-emerald-500/5 border border-emerald-500/30 rounded-xl p-4 shadow-lg">
+            <h3 class="font-bold text-emerald-400 flex items-center gap-2 mb-1">
+                <i data-lucide="flag" class="w-4 h-4"></i> Plant Your Flag Tonight
+            </h3>
+            <p class="text-xs text-slate-300">Welcome to Day 1! Read today's spec, build the feature, and submit your first LinkedIn proof of work before 2:00 AM IST to start your streak.</p>
+        </div>
+
+        <!-- Edge Case: Missed Day Recovery -->
+        <div th:if="${dashboard.isMissedDay}" class="bg-gradient-to-r from-red-500/20 to-red-500/5 border border-red-500/30 rounded-xl p-4 shadow-lg">
+            <h3 class="font-bold text-red-400 flex items-center gap-2 mb-1">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Momentum > Perfection
+            </h3>
+            <p class="text-xs text-slate-300">You missed a day, but that's okay. Use a freeze pass if you have one, or just start building again today. Don't break the habit!</p>
+        </div>
+
+        <!-- 2:00 AM IST Night-Owl Grace Banner -->
+        <div th:if="${dashboard.isNightOwlActive}" class="bg-[#131B2E] border border-blue-500/30 rounded-xl p-3 flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-2">
+                <i data-lucide="moon" class="text-blue-400 w-5 h-5"></i>
+                <span class="text-xs font-semibold text-blue-100">Night-Owl Grace Period</span>
+            </div>
+            <div class="bg-blue-500/20 text-blue-300 text-[10px] font-bold px-2 py-1 rounded">
+                Ends @ 2:00 AM
+            </div>
+        </div>
+
+        <!-- Flame Streak Hero Card -->
+        <div class="relative bg-gradient-to-br from-[#1E293B] to-[#0B0F19] border border-[#1E293B] rounded-2xl p-6 flex flex-col items-center justify-center overflow-hidden shadow-xl">
+            <div th:classappend="${dashboard.currentStreak > 0 ? 'bg-[#F59E0B] opacity-20' : 'bg-slate-500 opacity-10'}" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full blur-[80px]"></div>
+            
+            <i data-lucide="flame" th:classappend="${dashboard.currentStreak > 0 ? 'text-[#F59E0B] animate-bounce' : 'text-slate-500'}" class="w-16 h-16 fill-current mb-2"></i>
+            <h2 class="text-4xl font-extrabold text-white" th:text="${dashboard.currentStreak + ' Days'}">12 Days</h2>
+            <p class="text-sm text-slate-400 font-medium mt-1">Current Streak</p>
+            
+            <div class="flex items-center gap-4 mt-4 w-full">
+                <div class="flex-1 bg-[#131B2E] rounded-lg p-2 text-center border border-[#1E293B]">
+                    <p class="text-[10px] text-slate-400 uppercase">Longest</p>
+                    <p class="text-sm font-bold text-emerald-400" th:text="${dashboard.longestStreak + ' Days'}">12 Days</p>
+                </div>
+                <div class="flex-1 bg-[#131B2E] rounded-lg p-2 text-center border border-[#1E293B] flex flex-col items-center justify-center gap-0.5">
+                    <p class="text-[10px] text-slate-400 uppercase">Shields</p>
+                    <div class="flex items-center gap-1 text-sm font-bold" th:classappend="${dashboard.freezePasses > 0 ? 'text-blue-400' : 'text-slate-500'}">
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i> <span th:text="${dashboard.freezePasses}">2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Mission Card -->
+        <div th:if="${dashboard.todayTask != null}" class="bg-[#131B2E] border border-emerald-500/30 rounded-2xl p-5 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-xs font-bold text-emerald-500 uppercase tracking-wider">Today's Mission</span>
+                <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded" th:text="'~' + ${dashboard.todayTask.estimatedMins} + ' mins'">~45 mins</span>
+            </div>
+            <h3 class="text-lg font-bold mb-1" th:text="'Day ' + ${dashboard.todayTask.dayNumber} + ': ' + ${dashboard.todayTask.title}">Day 12: RESTful Endpoints</h3>
+            <p class="text-xs text-slate-400 mb-4 line-clamp-2" th:text="${dashboard.todayTask.summary}">Design bidirectional associations.</p>
+            <a th:href="@{/day/{id}(id=${dashboard.todayTask.dayNumber})}" class="w-full flex items-center justify-center gap-2 min-h-[48px] bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors">
+                <i data-lucide="play" class="w-4 h-4 fill-current"></i> Start Mission
+            </a>
+        </div>
+
+        <!-- 60-Day Visual Dot Matrix -->
+        <div class="bg-[#131B2E] border border-[#1E293B] rounded-2xl p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-sm">60-Day Journey</h3>
+                <span class="text-xs text-slate-400" th:text="${dashboard.totalCompleted} + '/60 Completed'">12/60 Completed</span>
+            </div>
+            <!-- 10x6 Grid -->
+            <div class="grid grid-cols-10 gap-2">
+                <th:block th:each="status : ${dashboard.matrixStatusList}">
+                    <div th:if="${status.name() == 'COMPLETED'}" class="w-full aspect-square rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></div>
+                    <div th:if="${status.name() == 'ACTIVE'}" class="w-full aspect-square rounded-full bg-[#F59E0B] animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)] border border-[#F59E0B]"></div>
+                    <div th:if="${status.name() == 'MISSED'}" class="w-full aspect-square rounded-full bg-red-500/50 border border-red-500"></div>
+                    <div th:if="${status.name() == 'PENDING'}" class="w-full aspect-square rounded-full bg-slate-800 border border-slate-700"></div>
+                </th:block>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav -->
+    <div th:replace="~{fragments/bottom-nav :: bottom-nav}"></div>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+</body>
+</html>

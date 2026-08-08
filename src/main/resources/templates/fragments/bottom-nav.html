@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="bottom-nav" class="fixed bottom-0 w-full max-w-[390px] mx-auto bg-[#131B2E] border-t border-[#1E293B] px-6 py-2 pb-6 z-50 flex justify-between items-center rounded-t-xl shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+    <a href="/" class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-slate-400 hover:text-slate-100 transition-colors">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Home</span>
+    </a>
+    <a href="/dashboard" class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-emerald-500 hover:text-emerald-400 transition-colors">
+        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Dashboard</span>
+    </a>
+    <a href="/day/12" class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-slate-400 hover:text-slate-100 transition-colors">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Day 12</span>
+    </a>
+</div>
+</body>
+</html>

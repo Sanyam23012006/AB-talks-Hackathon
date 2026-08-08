@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title th:text="'Day ' + ${task.dayNumber} + ' - ABTalks'">Day 12 - ABTalks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Marked.js for rendering markdown dynamically -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="bg-black text-slate-100 font-sans">
+
+<div class="max-w-[390px] mx-auto min-h-screen bg-[#0B0F19] text-slate-100 font-sans border-x border-slate-800 shadow-2xl relative pb-24 flex flex-col">
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="flex-1 px-4 py-6 flex flex-col gap-5">
+        
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
+            <a href="/dashboard" class="hover:text-emerald-400 min-h-[48px] flex items-center transition-colors">Dashboard</a>
+            <span>/</span>
+            <span class="text-slate-100" th:text="'Day ' + ${task.dayNumber} + ' of 60'">Day 12 of 60</span>
+        </div>
+
+        <!-- Task Header -->
+        <div class="flex flex-col gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <span th:text="${task.difficulty}" class="bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Intermediate</span>
+                <span class="bg-slate-800 text-slate-300 border border-slate-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3 h-3"></i> <span th:text="'~' + ${task.estimatedMins} + ' mins'">~45 mins</span>
+                </span>
+            </div>
+            <h1 class="text-2xl font-bold leading-tight" th:text="${task.title}">RESTful Endpoints & JPA Relationships</h1>
+        </div>
+
+        <!-- Spec Card -->
+        <div class="bg-[#131B2E] border border-[#1E293B] rounded-2xl p-5 shadow-lg">
+            <h3 class="font-bold text-sm text-emerald-400 mb-3 flex items-center gap-2">
+                <i data-lucide="file-text" class="w-4 h-4"></i> Objectives
+            </h3>
+            
+            <div id="markdown-content" class="text-sm text-slate-300 space-y-2 prose prose-invert" th:attr="data-markdown=${task.instructionsMarkdown}">
+                <!-- Rendered by JS -->
+            </div>
+            
+            <hr th:if="${task.starterRepoUrl != null}" class="border-[#1E293B] my-4">
+            
+            <a th:if="${task.starterRepoUrl != null}" th:href="${task.starterRepoUrl}" target="_blank" class="w-full flex items-center justify-center gap-2 min-h-[48px] bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-medium rounded-xl transition-colors">
+                <i data-lucide="github" class="w-4 h-4"></i> Clone Starter Repo
+            </a>
+        </div>
+
+        <!-- Submission Form -->
+        <div class="bg-[#131B2E] border border-[#1E293B] rounded-2xl p-5 shadow-lg flex flex-col gap-4 mt-2">
+            <h3 class="font-bold text-sm flex items-center gap-2">
+                <i data-lucide="upload-cloud" class="w-4 h-4 text-[#F59E0B]"></i> Submit Your Work
+            </h3>
+            
+            <form action="/dashboard" method="GET" class="flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-400">GitHub Commit URL</label>
+                    <input type="url" required placeholder="https://github.com/user/repo/commit/..." class="w-full min-h-[48px] bg-black border border-[#1E293B] rounded-xl px-4 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+                </div>
+                
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex justify-between items-end">
+                        <label class="text-xs font-bold text-slate-400">LinkedIn Post URL</label>
+                        <button type="button" th:attr="onclick='copyLinkedInTemplate(' + ${task.dayNumber} + ', \'' + ${task.title} + '\')'" class="text-[10px] text-blue-400 font-bold hover:text-blue-300 flex items-center gap-1 min-h-[48px] px-2 -mb-2">
+                            <i data-lucide="copy" class="w-3 h-3"></i> 1-Click Generator
+                        </button>
+                    </div>
+                    <input type="url" required placeholder="https://www.linkedin.com/posts/..." class="w-full min-h-[48px] bg-black border border-[#1E293B] rounded-xl px-4 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+                </div>
+                
+                <button type="submit" class="w-full flex items-center justify-center gap-2 min-h-[48px] bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl mt-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all">
+                    Submit Day <span th:text="${task.dayNumber}"></span> Proof 🔥
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav -->
+    <div th:replace="~{fragments/bottom-nav :: bottom-nav}"></div>
+</div>
+
+<script>
+    lucide.createIcons();
+    
+    // Render Markdown
+    const rawMarkdown = document.getElementById('markdown-content').getAttribute('data-markdown');
+    if (rawMarkdown) {
+        document.getElementById('markdown-content').innerHTML = marked.parse(rawMarkdown);
+    }
+    
+    function copyLinkedInTemplate(dayNumber, title) {
+        const textToCopy = `Day ${dayNumber}/60 of the ABTalks Coding Challenge completed! 🔥\n\nToday I built ${title} in Spring Boot.\n\nLoving the late-night coding grinds! 🚀\n#ABTalksChallenge #Java #SpringBoot #Backend`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert("Recruiter-ready LinkedIn post copied to clipboard!");
+        });
+    }
+</script>
+</body>
+</html>
